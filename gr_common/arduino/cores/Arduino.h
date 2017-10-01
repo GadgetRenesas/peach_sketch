@@ -42,8 +42,13 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #else /*GRLYCHEE GR-PEACH*/
-#define F_CPU (400 * 1000 * 1000)
-#define PCLK  (200 * 1000 * 1000 / 3.0)
+#ifdef GRPEACH
+#define F_CPU (400 * 1000 * 1000L)
+#define PCLK  (200 * 1000 * 1000 / 3.0L)
+#else GRLYCHEE
+#define F_CPU (384 * 1000 * 1000L)
+#define PCLK  (192 * 1000 * 1000 / 3.0L)
+#endif
 #define _BV(bit) (1 << (bit))
 #endif/*GRLYCHEE GR-PEACH*/
 

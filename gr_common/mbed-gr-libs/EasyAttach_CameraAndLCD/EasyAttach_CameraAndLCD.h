@@ -6,7 +6,7 @@
 
 // camera
 #if MBED_CONF_APP_CAMERA
-  #define CAMERA_NONE                 0
+  // camera-type
   #define CAMERA_CVBS                 1
   #define CAMERA_MT9V111              2
   #define CAMERA_OV7725               3
@@ -30,7 +30,7 @@
 
 // lcd
 #if MBED_CONF_APP_LCD
-  #define LCD_NONE                    0
+  // lcd-type
   #define GR_PEACH_4_3INCH_SHIELD     1
   #define GR_PEACH_7_1INCH_SHIELD     2
   #define GR_PEACH_RSK_TFT            3

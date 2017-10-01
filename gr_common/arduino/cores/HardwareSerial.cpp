@@ -46,7 +46,7 @@ HardwareSerial Serial7(P7_4, P7_5);
 #elif defined(GRLYCHEE)
 HardwareSerial Serial(USBTX, USBRX);
 HardwareSerial Serial0(P7_8, P1_8);
-HardwareSerial Serial1(P3_15, P0_2);
+HardwareSerial Serial2(P7_1, P0_1);
 HardwareSerial Serial4(P5_15, P5_14);
 #endif
 // Public Methods //////////////////////////////////////////////////////////////

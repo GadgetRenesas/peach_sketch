@@ -47,6 +47,7 @@ public:
 	~Camera();
 	void begin();
 	size_t createJpeg();
+	size_t createJpeg(uint16_t width, uint16_t height, uint8_t* buf);
 	uint8_t* getJpegAdr();
 	uint8_t* getImageAdr();
 	uint16_t getWidth();

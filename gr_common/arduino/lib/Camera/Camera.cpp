@@ -103,6 +103,10 @@ size_t Camera::createJpeg(){
     return encode_jpeg(JpegBuffer, sizeof(JpegBuffer), _width, _height, FrameBuffer_Video);
 }
 
+size_t Camera::createJpeg(uint16_t width, uint16_t height, uint8_t* buf){
+    return encode_jpeg(JpegBuffer, sizeof(JpegBuffer), width, height, buf);
+}
+
 uint8_t* Camera::getJpegAdr(){
     return JpegBuffer;
 }
