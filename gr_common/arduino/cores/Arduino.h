@@ -45,7 +45,7 @@
 #ifdef GRPEACH
 #define F_CPU (400 * 1000 * 1000L)
 #define PCLK  (200 * 1000 * 1000 / 3.0L)
-#else GRLYCHEE
+#elif defined(GRLYCHEE)
 #define F_CPU (384 * 1000 * 1000L)
 #define PCLK  (192 * 1000 * 1000 / 3.0L)
 #endif
