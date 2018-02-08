@@ -303,7 +303,7 @@ int os_tick_init (void) {
   OSTM0TT   = 0x1;    /* Stop the counter and clears the OSTM0TE bit.     */
   OSTM0CTL  = 0x1;    /* Interval timer mode. Interrupt enabled  */
 
-  OSTM0CMP  = (uint32_t)(((double)CM0_RENESAS_RZ_A1_P0_CLK*(double)OS_TICK)/1E6);
+  OSTM0CMP  = (uint32_t)(((double)RZ_A1_P0_CLK*(double)OS_TICK)/1E6);
 
   OSTM0TS   = 0x1;    /* Start the counter and sets the OSTM0TE bit.     */
 

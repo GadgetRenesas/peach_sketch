@@ -2,7 +2,6 @@
 #include "mbed.h"
 #include "rtos.h"
 #include "EasyAttach_CameraAndLCD.h"
-
 #if MBED_CONF_APP_LCD
 #if (MBED_CONF_APP_LCD_TYPE == GR_PEACH_4_3INCH_SHIELD) || (MBED_CONF_APP_LCD_TYPE == GR_PEACH_7_1INCH_SHIELD) || (MBED_CONF_APP_LCD_TYPE == GR_PEACH_RSK_TFT)
 static DigitalOut lcd_pwon(P7_15);
@@ -103,6 +102,21 @@ static DisplayBase::graphics_error_t camera_init(DisplayBase& Display, uint16_t 
         P1_0,       /* DV0_Vsync */
         P1_1        /* DV0_Hsync */
     };
+  #if MBED_CONF_APP_SHIELD_TYPE == SHIELD_AUDIO_CAMERA
+    DigitalOut pwdn(P3_12);
+    pwdn = 0;
+    Thread::wait(1 + 1);
+  #elif MBED_CONF_APP_SHIELD_TYPE == SHIELD_WIRELESS_CAMERA
+    DigitalOut pwdn(P3_15);
+    DigitalOut rstb(P3_14);
+
+    pwdn = 0;
+    rstb = 0;
+    Thread::wait(10 + 1);
+    rstb = 1;
+    Thread::wait(1 + 1);
+  #endif
+
   #elif defined(TARGET_GR_LYCHEE)
     PinName cmos_camera_pin[11] = {
         /* data pin */
@@ -161,7 +175,7 @@ static DisplayBase::graphics_error_t camera_init(DisplayBase& Display, uint16_t 
     ext_in_config.inp_hs_inv     = DisplayBase::SIG_POL_NOT_INVERTED;     /* External input DV_HSYNC inversion control     */
     ext_in_config.inp_f525_625   = DisplayBase::EXTIN_LINE_525;           /* Number of lines for BT.656 external input */
     ext_in_config.inp_h_pos      = DisplayBase::EXTIN_H_POS_YCBYCR;       /* Y/Cb/Y/Cr data string start timing to Hsync reference */
-    ext_in_config.cap_vs_pos     = 4+20;                                  /* Capture start position from Vsync */
+    ext_in_config.cap_vs_pos     = 4+21;                                  /* Capture start position from Vsync */
     ext_in_config.cap_hs_pos     = 68;                                    /* Capture start position form Hsync */
     if (cap_width != 0) {
         ext_in_config.cap_width  = cap_width;                             /* Capture width */
@@ -172,6 +186,33 @@ static DisplayBase::graphics_error_t camera_init(DisplayBase& Display, uint16_t 
         ext_in_config.cap_height = cap_height;                            /* Capture heigh */
     } else {
         ext_in_config.cap_height = 480;                                   /* Capture height Max */
+    }
+  #elif MBED_CONF_APP_CAMERA_TYPE == CAMERA_OV5642
+    /* OV5642 camera input config */
+    OV5642_config::Initialise();
+
+    ext_in_config.inp_format     = DisplayBase::VIDEO_EXTIN_FORMAT_BT601; /* BT601 8bit YCbCr format */
+    ext_in_config.inp_pxd_edge   = DisplayBase::EDGE_RISING;              /* Clock edge select for capturing data          */
+    ext_in_config.inp_vs_edge    = DisplayBase::EDGE_RISING;              /* Clock edge select for capturing Vsync signals */
+    ext_in_config.inp_hs_edge    = DisplayBase::EDGE_RISING;              /* Clock edge select for capturing Hsync signals */
+    ext_in_config.inp_endian_on  = DisplayBase::OFF;                      /* External input bit endian change on/off       */
+    ext_in_config.inp_swap_on    = DisplayBase::OFF;                      /* External input B/R signal swap on/off         */
+    ext_in_config.inp_vs_inv     = DisplayBase::SIG_POL_NOT_INVERTED;     /* External input DV_VSYNC inversion control     */
+    ext_in_config.inp_hs_inv     = DisplayBase::SIG_POL_NOT_INVERTED;     /* External input DV_HSYNC inversion control     */
+    ext_in_config.inp_f525_625   = DisplayBase::EXTIN_LINE_525;           /* Number of lines for BT.656 external input */
+    ext_in_config.inp_h_pos      = DisplayBase::EXTIN_H_POS_YCBYCR;       /* Y/Cb/Y/Cr data string start timing to Hsync reference */
+    ext_in_config.cap_vs_pos     = 8;                                     /* Capture start position from Vsync */
+    ext_in_config.cap_hs_pos     = 8;                                     /* Capture start position form Hsync */
+    if (cap_width != 0) {
+        ext_in_config.cap_width  = cap_width;                             /* Capture width */
+    } else {
+        ext_in_config.cap_width  = 640;                                   /* Capture width  */
+    }
+    if (cap_height != 0) {
+        ext_in_config.cap_height = cap_height;                            /* Capture heigh */
+    } else {
+        ext_in_config.cap_height = 480u;                                  /* Capture height Max 480[line]
+                                                                            Due to CMOS(MT9D111) output signal timing and VDC5 specification */
     }
   #else
     #error "No camera chosen. Please add 'config.camera-type.value' to your mbed_app.json (see README.md for more information)."
@@ -219,8 +260,10 @@ void EasyAttach_LcdBacklight(bool type) {
 }
 
 void EasyAttach_LcdBacklight(float value) {
+#if MBED_CONF_APP_LCD
 #if (MBED_CONF_APP_LCD_TYPE == GR_PEACH_4_3INCH_SHIELD) || (MBED_CONF_APP_LCD_TYPE == GR_PEACH_7_1INCH_SHIELD) || (MBED_CONF_APP_LCD_TYPE == GR_PEACH_RSK_TFT) || (MBED_CONF_APP_LCD_TYPE == GR_LYCHEE_LCD)
     lcd_cntrst = (value * VOLTAGE_ADJUSTMENT);
+#endif
 #endif
 }
 

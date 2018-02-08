@@ -265,6 +265,16 @@ goToSleep:
     b       .L_loop2
 .L_loop2_done:
 
+@ clean dcache all
+    mov     r0, #0x1
+    ldr     r1, =__v7_all_cache
+    blx     r1
+
+@ clean icache all
+    mov     r0,#0x0
+    mcr     p15,0,r0,c7,c5
+    dsb
+    isb
 
     ldr     r0, =_start
     bx      r0

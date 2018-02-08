@@ -33,7 +33,9 @@ void setupUSB() { }
 #if defined(GRLYCHEE) || defined(GRPEACH)
 Timer arduino_system_timer;
 #endif
-int main(void)
+
+Thread visionTask(osPriorityNormal, (1024 * 33));
+void vision_task(void)
 {
 #if defined(GRLYCHEE) || defined(GRPEACH)
 	arduino_system_timer.start();
@@ -56,7 +58,10 @@ int main(void)
 		if (serialEventRun) serialEventRun();
 #endif
 	}
-
-	return 0;
 }
 
+int main() {
+    visionTask.start(&vision_task);
+    /* Wait for the threads to finish */
+    visionTask.join();
+}

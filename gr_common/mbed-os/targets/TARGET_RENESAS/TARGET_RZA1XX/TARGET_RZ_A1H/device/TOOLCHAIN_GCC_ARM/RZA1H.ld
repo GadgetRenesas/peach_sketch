@@ -51,7 +51,6 @@ SECTIONS
 
         Image$$VECTORS$$Base = .;
         * (RESET)
-        Image$$VECTORS$$Limit = .;
         . += 0x00000400;
 
         KEEP(*(.isr_vector))
@@ -74,6 +73,7 @@ SECTIONS
         *(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
         *(SORT(.dtors.*))
         *(.dtors)
+        Image$$VECTORS$$Limit = .;
 
         Image$$RO_DATA$$Base = .;
         *(.rodata*)
@@ -105,6 +105,9 @@ SECTIONS
         LONG (__etext2)
         LONG (__nc_data_start)
         LONG (__nc_data_end - __nc_data_start)
+        LONG (LOADADDR(.ram_code))
+        LONG (ADDR(.ram_code))
+        LONG (SIZEOF(.ram_code))
         __copy_table_end__ = .;
     } > SFLASH
 
@@ -119,14 +122,30 @@ SECTIONS
         __zero_table_end__ = .;
     } > SFLASH
 
-    __etext = .;
-        
+    .ram_code : ALIGN( 0x4 ) {
+        __ram_code_load  = .;
+        __ram_code_start = LOADADDR(.ram_code) + ( __ram_code_load - ADDR(.ram_code) );
+
+        *(RAM_CODE)
+
+        *(RAM_CONST)
+
+        . = ALIGN( 0x4 );
+        __ram_code_end = LOADADDR(.ram_code) + ( . - ADDR(.ram_code) );
+    } > RAM AT > SFLASH
+
+    Load$$SPIBSC_WRITE_OPERATION$$Base    = LOADADDR(.ram_code);
+    Image$$SPIBSC_WRITE_OPERATION$$Base   = ADDR(.ram_code);
+    Load$$SPIBSC_WRITE_OPERATION$$Length  = SIZEOF(.ram_code);
+
     .ttb :
     {
         Image$$TTB$$ZI$$Base = .;
         . += 0x00004000;
         Image$$TTB$$ZI$$Limit = .;
     } > L_TTB
+
+    __etext = Load$$SPIBSC_WRITE_OPERATION$$Base + SIZEOF(.ram_code);
 
     .data : AT (__etext)
     {

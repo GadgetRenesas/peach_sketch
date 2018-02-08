@@ -28,6 +28,8 @@
 #define GRAPHICS_FORMAT        (DisplayBase::GRAPHICS_FORMAT_YCBCR422)
 #define WR_RD_WRSWA            (DisplayBase::WR_RD_WRSWA_32_16BIT)
 #define DATA_SIZE_PER_PIC      (2u)
+#define BYTE_PER_PIXEL_YUV     DATA_SIZE_PER_PIC
+#define BYTE_PER_PIXEL_RGB     (3u)
 
 /*! Frame buffer stride: Frame buffer stride should be set to a multiple of 32 or 128
  in accordance with the frame buffer burst transfer mode. */
@@ -39,23 +41,37 @@
 
 class Camera {
 public:
-	typedef enum {
-		VIDEO_CVBS = 0,
-		VIDEO_CMOS_CAMERA
+	enum {
+		CAMERA_TYPE_CVBS = 0,
+		CAMERA_TYPE_CMOS,
+		CAMERA_TYPE_WCSHIELD
 	};
-	Camera(uint16_t width = VIDEO_PIXEL_HW, uint16_t height = VIDEO_PIXEL_VW, uint8_t mode = VIDEO_CMOS_CAMERA);
+
+	enum {
+		FORMAT_YUV422 = 0,
+		FORMAT_RGB888,
+		FORMAT_GRAY
+	};
+	Camera(uint16_t width = VIDEO_PIXEL_HW, uint16_t height = VIDEO_PIXEL_VW, uint8_t mode = CAMERA_TYPE_CMOS);
 	~Camera();
 	void begin();
+	void stop();
+	void restart();
+	void refresh();
 	size_t createJpeg();
-	size_t createJpeg(uint16_t width, uint16_t height, uint8_t* buf);
+	size_t createJpeg(uint16_t width, uint16_t height, uint8_t* buf, uint8_t format = FORMAT_YUV422);
 	uint8_t* getJpegAdr();
 	uint8_t* getImageAdr();
 	uint16_t getWidth();
 	uint16_t getHeight();
+	bool isCaptured();
+
+	static DisplayBase::video_ext_in_config_t ext_in_config;
 
 private:
 	uint16_t _width;
 	uint16_t _height;
+	uint32_t _size;
 	uint8_t _mode;
 
 };

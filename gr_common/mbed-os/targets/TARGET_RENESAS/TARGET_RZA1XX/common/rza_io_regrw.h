@@ -43,6 +43,7 @@ Includes   <System Includes> , "Project Includes"
 #include "rspi_iobitmask.h"
 #include "riic_iobitmask.h"
 #include "usb_iobitmask.h"
+#include "spibsc_iobitmask.h"
 #include "gpio_iobitmask.h"
 
 #ifdef __cplusplus

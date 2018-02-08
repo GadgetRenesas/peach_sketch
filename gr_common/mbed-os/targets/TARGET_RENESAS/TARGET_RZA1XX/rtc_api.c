@@ -17,7 +17,7 @@
 #include "mbed_assert.h"
 #include "device.h"
 
-#ifdef DEVICE_RTC
+#if DEVICE_RTC
 
 #include "rtc_api.h"
 #include "iodefine.h"

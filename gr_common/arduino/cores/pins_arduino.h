@@ -159,6 +159,11 @@
 #define PIN_LED_USER    PIN_LED4
 #define PIN_USER_BUTTON0 PIN_SW
 
+#define PIN_ESP_TX  PIN_IO1
+#define PIN_ESP_RX  PIN_IO0
+#define PIN_ESP_IO0 PIN_IO45
+#define PIN_ESP_EN  PIN_IO46
+
 // ANALOG IO PINS -------------------------------------------------------------/
 
 /** Analog pins, header CN15. */
